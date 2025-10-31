@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .js"
   },
   "repository": {
-    "type": "git",
+    "type": "module",
     "url": "git+https://github.com/lee-sinh/oeurn-leesinh-lab1.git"
   },
   "keywords": [],
@@ -24,7 +24,7 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "chai": "^6.2.0",
+    "chai": "4",
     "eslint": "^9.38.0",
     "mocha": "^11.7.4",
     "supertest": "^7.1.4"
