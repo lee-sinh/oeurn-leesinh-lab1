@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-and-test:
+    name: Lint, Test & Coverage
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,5 +31,39 @@ jobs:
       - name: Lint code
         run: yarn lint
 
-      - name: Run tests
-        run: yarn test
+      - name: Run tests with coverage
+        run: yarn test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/
+
+  deploy:
+    name: Deploy to Vercel
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --production
+
+      - name: Setup Vercel credentials
+        run: |
+          echo "VERCEL_ORG_ID=${{ secrets.VERCEL_USER_ID }}" >> $GITHUB_ENV
+          echo "VERCEL_PROJECT_ID=${{ secrets.VERCEL_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "VERCEL_TOKEN=${{ secrets.VERCEL_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Deploy to Vercel
+        run: npx vercel --prod --confirm --token=${{ secrets.VERCEL_TOKEN }}
