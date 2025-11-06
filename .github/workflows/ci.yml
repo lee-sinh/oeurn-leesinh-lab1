@@ -35,10 +35,12 @@ jobs:
         run: yarn test:coverage
 
       - name: Upload coverage report
+        if: matrix.node-version == '18.x'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
+          overwrite: true
 
   deploy:
     name: Deploy to Vercel
